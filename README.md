@@ -12,9 +12,9 @@
 ## Table of Contents
 
 - [Table of Contents](#table-of-contents)
-- [Core Concepts ](#core-concepts-)
-- [Mechanics ](#mechanics-)
-- [Gameplay Loop ](#gameplay-loop-)
+- [Core Concepts](#core-concepts-)
+- [Mechanics](#mechanics-)
+- [Gameplay Loop](#gameplay-loop-)
 
 ## Core Concepts <a name="core-concepts"></a>
 
@@ -32,6 +32,7 @@
    - **Decision Making**: Making strategic decisions that impact the safety and efficiency of the facility.
 
 ## Mechanics <a name="mechanics"></a>
+
 1. **Anomaly Interactions**
    - **Tasks**: Assign employees to perform tasks such as insight, instinct, attachment, and repression with anomalies.
    - **Anomaly Behavior**: Each anomaly has specific reactions and behaviors that players must learn and manage effectively.
@@ -46,6 +47,7 @@
    - **Physical Health**: Ensuring employees recover from injuries and are equipped to handle the demands of the job.
 
 ## Gameplay Loop <a name="gameplay-loop"></a>
+
 1. **Day-to-Day Operations**
    - Start each day by planning and assigning tasks to employees.
    - Interact with anomalies to extract energy while managing risks.
