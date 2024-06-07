@@ -19,7 +19,7 @@ public class gifTesting extends PApplet {
    */
 public void setup() {
     size(400,400);
-    myAnimation = new Gif(this, "u69a9ti3mdma1.gif");
+    myAnimation = new Gif(this, "gif test.gif");
     myAnimation.play();
     background(210, 255, 173);
     fill(100);
