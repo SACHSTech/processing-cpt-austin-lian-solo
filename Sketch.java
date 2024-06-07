@@ -301,7 +301,7 @@ public class Sketch extends PApplet {
      * If the anomaly's energy is less than 0, the square's transparency oscillates/flashes.
      */
     void display() {
-      if (intEnergy < 05) {
+      if (intEnergy < 0) {
         p.fill(255, 0, 0, (int) (abs(PApplet.sin((float) (p.frameCount * 0.2))) * 255));
       } else {
         p.fill(255, 0, 0);
