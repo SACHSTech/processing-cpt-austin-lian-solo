@@ -84,9 +84,9 @@ public class Sketch extends PApplet {
     textSize(48);
     textAlign(CENTER, CENTER);
     fill(255); // Set the fill color for the rectangle
-    rect(width / 2 - 150, height / 8 - 60, 300, 120); // Increase the size of the rectangle
+    rect(width / 2 - 250, height / 8 - 30, 500, 60); // Increase the rectangle size
     fill(0); // Set the fill color for the text
-    text("Main Menu", width / 2, height / 8);
+    text("Anomaly Corporation", width / 2, height / 8);
 
     // Draw buttons
     drawButton("Play", width / 2, height / 2 - 50);
