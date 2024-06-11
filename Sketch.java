@@ -1,4 +1,6 @@
 import processing.core.PApplet;
+import processing.core.PImage;
+
 import java.util.ArrayList;
 import gifAnimation.*;
 
@@ -25,12 +27,16 @@ public class Sketch extends PApplet {
   public static void main(String[] args) {
     PApplet.main("Sketch");
   }
+
   /**
    * Sets the size of the window
    */
   public void settings() {
     size(800, 600);
   }
+
+  PImage backMain;
+  PImage backGame;
   /**
    * Initializes the game entities and sets up the game environment.
    */
@@ -43,7 +49,12 @@ public class Sketch extends PApplet {
     lstAnomalies.add(new Anomaly(this, 600, 300, "Anomaly 2", cu2));
     lstContainmentUnits.add(cu1);
     lstContainmentUnits.add(cu2);
+    backMain = loadImage("Background Malkuth.png");
+    backMain.resize(width, height);
+    backGame = loadImage("Background Images\\Background Tipereth.png");
+    backGame.resize(width, height);
   }
+
   /**
    * Draws the game based on the current state, the numbers correspond to which screen is being displayed.
    */
@@ -58,22 +69,27 @@ public class Sketch extends PApplet {
       drawTaskMenu();
     }
   }
+
   /**
    * Intializes the layout, sets up the buttons, and handles user interaction for the main menu.
    *
    * @author Austin L
    */
   public void drawMenu() {
-    background(210, 255, 173);
+    background(backMain);
     fill(50);
     textSize(48);
     textAlign(CENTER, CENTER);
-    text("Main Menu", width / 2, height / 4);
+    fill(255); // Set the fill color for the rectangle
+    rect(width / 2 - 150, height / 8 - 60, 300, 120); // Increase the size of the rectangle
+    fill(0); // Set the fill color for the text
+    text("Main Menu", width / 2, height / 8);
 
     // Draw buttons
     drawButton("Play", width / 2, height / 2 - 50);
     drawButton("Tutorial", width / 2, height / 2 + 50);
   }
+
   /**
    * This method is responsible for drawing the game screen.
    * It sets the background color, displays the game title, and shows the player's current energy.
@@ -81,13 +97,16 @@ public class Sketch extends PApplet {
    * It draws a "Back" button that allows the player to return to the previous screen.
    */
   public void drawGame() {
-    background(150, 200, 255);
+    background(backGame);
+    //background(150, 200, 255);
     fill(0);
     textSize(32);
     textAlign(CENTER, CENTER);
+    fill(255); // Set the fill color for the rectangle
+    rect(width / 2 - 130, 30, 260, 35); // Decrease the size of the rectangle for "Game Screen"
+    rect(width - 230, 30, 230, 35); // Decrease the size of the rectangle for "Energy"
+    fill(0); // Set the fill color for the text
     text("Game Screen", width / 2, 50);
-
-    // Display energy
     text("Energy: " + intEnergy, width - 150, 50);
 
     // Draw entities
@@ -105,6 +124,7 @@ public class Sketch extends PApplet {
     // Draw back button
     drawButton("Back", 70, 45);
   }
+
   /**
    * This method is responsible for drawing the tutorial screen.
    * TBD
@@ -207,7 +227,7 @@ public class Sketch extends PApplet {
 
   /**
    * Checks if a button at the given coordinates was clicked.
-   * The button's width and height are defined by the intButtonWidth and intButtonHeight variables.
+   * The button's width and height are definedo by the intButtonWidth and intButtonHeight variables.
    * It checks if the mouse's current x and y coordinates (mouseX and mouseY) are within the area of the button.
    *
    * @param intX The x-coordinate of the center of the button.
@@ -262,9 +282,10 @@ public class Sketch extends PApplet {
       this.fltY = fltY;
     }
 
+    // Might not actually do this
     void display() {
-      p.fill(0, 0, 255);
-      p.ellipse(fltX, fltY, 20, 20);
+    //  p.fill(0, 0, 255);
+    //  p.ellipse(fltX, fltY, 20, 20);
     }
   }
 
@@ -295,6 +316,7 @@ public class Sketch extends PApplet {
       this.strName = strName;
       this.containmentUnit = containmentUnit;
     }
+
     /**
      * Displays the anomaly on the screen.
      * The anomaly is represented as a red square.
@@ -309,6 +331,7 @@ public class Sketch extends PApplet {
       p.rect(fltX, fltY, 30, 30);
       move();
     }
+
     /**
      * Moves the anomaly randomly within the bounds of its containment unit.
      */
