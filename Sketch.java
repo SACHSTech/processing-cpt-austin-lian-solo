@@ -37,6 +37,7 @@ public class Sketch extends PApplet {
 
   PImage backMain;
   PImage backGame;
+  PImage containUnit;
   /**
    * Initializes the game entities and sets up the game environment.
    */
@@ -53,6 +54,8 @@ public class Sketch extends PApplet {
     backMain.resize(width, height);
     backGame = loadImage("Background Images\\Background Tipereth.png");
     backGame.resize(width, height);
+    containUnit = loadImage("Containment Unit.png");
+    containUnit.resize(150, 150);
   }
 
   /**
@@ -371,8 +374,7 @@ public class Sketch extends PApplet {
      * The containment unit is represented as a gray square.
      */
     void display() {
-      p.fill(100);
-      p.rect(fltX - 40, fltY - 40, 80, 80);
+      image(containUnit, fltX - 40, fltY - 40, 150, 150); // Display the image
     }
 
     /**
@@ -384,7 +386,7 @@ public class Sketch extends PApplet {
      * @return true if the containment unit was clicked, false otherwise.
      */
     boolean isClicked(int intMX, int intMY) {
-      return intMX > fltX - 40 && intMX < fltX + 40 && intMY > fltY - 40 && intMY < fltY + 40;
+      return intMX > fltX - 75 && intMX < fltX + 75 && intMY > fltY - 75 && intMY < fltY + 75;
     }
   }
 }
