@@ -158,12 +158,12 @@ public class Sketch extends PApplet {
 
     // Reset text alignment for instructions
     textAlign(LEFT, CENTER);
-    textSize(18); // Smaller text for detailed instructions
+    textSize(17); // Smaller text for detailed instructions
 
     // Instructions
     String[] instructions = {
         "Welcome to Anomaly Corporation!",
-        "In this game, you are tasked with containing various anomalies within containment units.",
+        "As the Director of this facility, you are tasked with containing various anomalies within containment units.",
         "You can perform tasks to manage the anomalies and earn energy points.",
         "If you run out of energy, the anomalies will breach containment and you will lose the game.",
         "Click the 'Back' button to start the game.",
