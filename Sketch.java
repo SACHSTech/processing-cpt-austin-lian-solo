@@ -4,6 +4,11 @@ import processing.core.PImage;
 import java.util.ArrayList;
 import gifAnimation.*;
 
+  /* Todo:
+   * Add game win/lose conditions (energy <= 0 for too long and anomalies escape)
+   * do something with employees (maybe make them die with a respawn timer when a task is failed)
+   */
+
 public class Sketch extends PApplet {
 
   // Game states
@@ -38,6 +43,7 @@ public class Sketch extends PApplet {
   PImage backMain;
   PImage backGame;
   PImage containUnit;
+  int taskCompletedTime = 0;
   /**
    * Initializes the game entities and sets up the game environment.
    */
@@ -100,33 +106,50 @@ public class Sketch extends PApplet {
    * It draws a "Back" button that allows the player to return to the previous screen.
    */
   public void drawGame() {
-    background(backGame);
-    //background(150, 200, 255);
-    fill(0);
-    textSize(32);
-    textAlign(CENTER, CENTER);
-    fill(255); // Set the fill color for the rectangle
-    rect(width / 2 - 130, 30, 260, 35); // Decrease the size of the rectangle for "Game Screen"
-    rect(width - 230, 30, 230, 35); // Decrease the size of the rectangle for "Energy"
-    fill(0); // Set the fill color for the text
-    text("Game Screen", width / 2, 50);
-    text("Energy: " + intEnergy, width - 150, 50);
+    if (taskCompleted) {
+      if (taskCompletedTime == 0) { // Record the completion time if not already recorded
+          taskCompletedTime = millis();
+      }
 
-    // Draw entities
-    for (Employee employee : lstEmployees) {
-      employee.display();
-    }
-    for (ContainmentUnit containmentUnit : lstContainmentUnits) {
-      containmentUnit.display();
-    }
-    // Add this loop to display anomalies
-    for (Anomaly anomaly : lstAnomalies) {
-      anomaly.display();
-    }
+      background(0); // Set background color to black
+      fill(255); // Set text color to white
+      textSize(32); // Set text size
+      textAlign(CENTER, CENTER);
+      text(taskCompletedMessage, width / 2, height / 2); // Display the completion message
 
-    // Draw back button
-    drawButton("Back", 70, 45);
-  }
+      if (millis() - taskCompletedTime > 2000) { // Check if 2 seconds have passed
+          taskCompleted = false; // Reset the task completion flag
+          taskCompletedTime = 0; // Reset the completion time for the next use
+      }
+    } else {
+        taskCompletedTime = 0;
+        background(backGame);
+        fill(0);
+        textSize(32);
+        textAlign(CENTER, CENTER);
+        fill(255); // Set the fill color for the rectangle
+        rect(width / 2 - 130, 30, 260, 35); // Decrease the size of the rectangle for "Game Screen"
+        rect(width - 230, 30, 230, 35); // Decrease the size of the rectangle for "Energy"
+        fill(0); // Set the fill color for the text
+        text("Game Screen", width / 2, 50);
+        text("Energy: " + intEnergy, width - 150, 50);
+
+        // Draw entities
+        for (Employee employee : lstEmployees) {
+            employee.display();
+        }
+        for (ContainmentUnit containmentUnit : lstContainmentUnits) {
+            containmentUnit.display();
+        }
+        // Add this loop to display anomalies
+        for (Anomaly anomaly : lstAnomalies) {
+            anomaly.display();
+        }
+
+        // Draw back button
+        drawButton("Back", 70, 45);
+    }
+}
 
   /**
    * This method is responsible for drawing the tutorial screen.
@@ -158,7 +181,7 @@ public class Sketch extends PApplet {
     text("Task Menu", width / 2, height / 4);
 
     // Draw task buttons
-    drawButton("Instinct - 50% Success", width / 2, height / 2 - 50);
+    drawButton("Research - 50% Success", width / 2, height / 2 - 50);
     drawButton("Repression - 70% Success", width / 2, height / 2 + 50);
 
     // Draw back button
@@ -217,7 +240,7 @@ public class Sketch extends PApplet {
       }
     } else if (intState == 3) {
       if (isButtonClicked(width / 2, height / 2 - 50)) {
-        performTask("Instinct");
+        performTask("Research");
         intState = 1; // Back to game screen
       } else if (isButtonClicked(width / 2, height / 2 + 50)) {
         performTask("Repression");
@@ -242,34 +265,33 @@ public class Sketch extends PApplet {
            mouseY > intY - intButtonHeight / 2 && mouseY < intY + intButtonHeight / 2;
   }
 
+  boolean taskCompleted = false;
+  String taskCompletedMessage = "";
   /**
    * Performs a task of the given type on the selected containment unit.
-   * If the task type is "Instinct", there is a 50% chance of success. On success, 10 energy is added. On failure, 5 energy is subtracted.
+   * If the task type is "Research", there is a 50% chance of success. On success, 10 energy is added. On failure, 5 energy is subtracted.
    * If the task type is "Repression", there is a 70% chance of success. On success, 15 energy is added. On failure, 25 energy is subtracted.
    *
-   * @param strTaskType The type of the task to perform. Can be "Instinct" or "Repression".
+   * @param strTaskType The type of the task to perform. Can be "Research" or "Repression".
    */
   public void performTask(String strTaskType) {
     if (selectedUnit != null) {
-      if (strTaskType.equals("Instinct")) {
-        // Perform Instinct task
-        boolean blnSuccess = random(1) > 0.5; // 50% chance of success
-        if (blnSuccess) {
-          intEnergy += 10; // Add energy on success
-        } else {
-          intEnergy -= 5; // Subtract energy on failure
+        boolean blnSuccess = false;
+        int energyPointsChange = 0; // Initialize the variable to track energy points change
+
+        if (strTaskType.equals("Research")) {
+            blnSuccess = random(1) > 0.5;
+            energyPointsChange = blnSuccess ? 10 : -5;
+        } else if (strTaskType.equals("Repression")) {
+            blnSuccess = random(1) > 0.3;
+            energyPointsChange = blnSuccess ? 15 : -25;
         }
-      } else if (strTaskType.equals("Repression")) {
-        // Perform Repression task
-        boolean blnSuccess = random(1) > 0.3; // 70% chance of success
-        if (blnSuccess) {
-          intEnergy += 15; // Add energy on success
-        } else {
-          intEnergy -= 25; // Subtract energy on failure
-        }
-      }
+
+        intEnergy += energyPointsChange; // Update the energy based on the task outcome
+        taskCompletedMessage = strTaskType + " task was " + (blnSuccess ? "a success! You gained " : "failed. You lost ") + Math.abs(energyPointsChange) + " energy points.";
+        taskCompleted = true;
     }
-  }
+}
 
   /**
    * Represents an employee in the game.
