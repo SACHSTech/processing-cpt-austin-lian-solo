@@ -22,6 +22,7 @@ public class Sketch extends PApplet {
   ArrayList<Employee> lstEmployees = new ArrayList<>();
   ArrayList<Anomaly> lstAnomalies = new ArrayList<>();
   ArrayList<ContainmentUnit> lstContainmentUnits = new ArrayList<>();
+  ArrayList<Employee> employees = new ArrayList<Employee>();
 
   // Selected containment unit
   ContainmentUnit selectedUnit = null;
@@ -62,6 +63,9 @@ public class Sketch extends PApplet {
     backGame.resize(width, height);
     containUnit = loadImage("Containment Unit.png");
     containUnit.resize(150, 150);
+    employees.add(new Employee(this, 100, 100));
+    employees.add(new Employee(this, 200, 100));
+    employees.add(new Employee(this, 300, 100));
   }
 
   /**
@@ -145,7 +149,10 @@ public class Sketch extends PApplet {
         for (Anomaly anomaly : lstAnomalies) {
             anomaly.display();
         }
-
+          // Display all employees
+          for (Employee emp : employees) {
+            emp.display();
+        }
         // Draw back button
         drawButton("Back", 70, 45);
     }
@@ -290,7 +297,11 @@ public class Sketch extends PApplet {
         intEnergy += energyPointsChange; // Update the energy based on the task outcome
         taskCompletedMessage = strTaskType + " task was " + (blnSuccess ? "a success! You gained " : "failed. You lost ") + Math.abs(energyPointsChange) + " energy points.";
         taskCompleted = true;
+        if (!blnSuccess) {
+          //employee.startFlashing(); // Assuming 'employee' is an instance of Employee
+      }
     }
+
 }
 
   /**
@@ -300,19 +311,40 @@ public class Sketch extends PApplet {
   class Employee {
     PApplet p;
     float fltX, fltY;
+    boolean isFlashing = false;
+    int flashStartTime;
+    static final int FLASH_DURATION = 30000; // 30 seconds in milliseconds
 
     Employee(PApplet p, float fltX, float fltY) {
-      this.p = p;
-      this.fltX = fltX;
-      this.fltY = fltY;
+        this.p = p;
+        this.fltX = fltX;
+        this.fltY = fltY;
     }
 
-    // Might not actually do this
-    void display() {
-    //  p.fill(0, 0, 255);
-    //  p.ellipse(fltX, fltY, 20, 20);
+    void startFlashing() {
+        isFlashing = true;
+        flashStartTime = p.millis();
     }
-  }
+
+    void update() {
+        if (isFlashing && p.millis() - flashStartTime > FLASH_DURATION) {
+            isFlashing = false; // Stop flashing after 30 seconds
+        }
+    }
+
+    void display() {
+        if (isFlashing) {
+            // Flash by toggling visibility every half second
+            if ((p.millis() / 500) % 2 == 0) {
+                p.fill(0, 0, 255);
+                p.ellipse(fltX, fltY, 20, 20);
+            }
+        } else {
+            p.fill(0, 0, 255);
+            p.ellipse(fltX, fltY, 20, 20);
+        }
+    }
+}
 
   /**
    * Represents an anomaly in the game.
