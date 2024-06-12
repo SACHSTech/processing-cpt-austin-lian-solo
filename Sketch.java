@@ -162,8 +162,12 @@ public class Sketch extends PApplet {
 
     // Instructions
     String[] instructions = {
-        "1. Peanut",
-        "2. dassd.",
+        "Welcome to Anomaly Corporation!",
+        "In this game, you are tasked with containing various anomalies within containment units.",
+        "You can perform tasks to manage the anomalies and earn energy points.",
+        "If you run out of energy, the anomalies will breach containment and you will lose the game.",
+        "Click the 'Back' button to start the game.",
+        "Good luck!"
     };
 
     // Calculate starting y position for instructions
@@ -172,8 +176,8 @@ public class Sketch extends PApplet {
 
     // Loop through instructions and display them
     for (int i = 0; i < instructions.length; i++) {
-        text(instructions[i], width / 4, startY + (i * stepY));
-    }
+      text(instructions[i], 20, startY + (i * stepY)); // Changed width / 4 to 20
+  }
 
     // Draw back button
     drawButton("Back", 70, 45);
