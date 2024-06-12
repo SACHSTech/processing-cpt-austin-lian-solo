@@ -1,7 +1,6 @@
 import processing.core.PApplet;
 import processing.core.PImage;
-
-import java.util.ArrayList;
+import java.util.*;
 import gifAnimation.*;
 
   /* Todo:
@@ -19,10 +18,8 @@ public class Sketch extends PApplet {
   int intButtonHeight = 75;
 
   // Entities
-  ArrayList<Employee> lstEmployees = new ArrayList<>();
   ArrayList<Anomaly> lstAnomalies = new ArrayList<>();
   ArrayList<ContainmentUnit> lstContainmentUnits = new ArrayList<>();
-  ArrayList<Employee> employees = new ArrayList<Employee>();
 
   // Selected containment unit
   ContainmentUnit selectedUnit = null;
@@ -44,13 +41,12 @@ public class Sketch extends PApplet {
   PImage backMain;
   PImage backGame;
   PImage containUnit;
-  int taskCompletedTime = 0;
+  int intTaskCompletedTime = 0;
   /**
    * Initializes the game entities and sets up the game environment.
    */
   public void setup() {
     // Initialize entities
-    lstEmployees.add(new Employee(this, 100, 100));
     ContainmentUnit cu1 = new ContainmentUnit(this, 400, 300);
     ContainmentUnit cu2 = new ContainmentUnit(this, 600, 300);
     lstAnomalies.add(new Anomaly(this, 400, 300, "Anomaly 1", cu1));
@@ -63,9 +59,6 @@ public class Sketch extends PApplet {
     backGame.resize(width, height);
     containUnit = loadImage("Containment Unit.png");
     containUnit.resize(150, 150);
-    employees.add(new Employee(this, 100, 100));
-    employees.add(new Employee(this, 200, 100));
-    employees.add(new Employee(this, 300, 100));
   }
 
   /**
@@ -110,23 +103,23 @@ public class Sketch extends PApplet {
    * It draws a "Back" button that allows the player to return to the previous screen.
    */
   public void drawGame() {
-    if (taskCompleted) {
-      if (taskCompletedTime == 0) { // Record the completion time if not already recorded
-          taskCompletedTime = millis();
+    if (blnTaskCompleted) {
+      if (intTaskCompletedTime == 0) { // Record the completion time if not already recorded
+          intTaskCompletedTime = millis();
       }
 
       background(0); // Set background color to black
       fill(255); // Set text color to white
       textSize(32); // Set text size
       textAlign(CENTER, CENTER);
-      text(taskCompletedMessage, width / 2, height / 2); // Display the completion message
+      text(strTaskCompletedMessage, width / 2, height / 2); // Display the completion message
 
-      if (millis() - taskCompletedTime > 2000) { // Check if 2 seconds have passed
-          taskCompleted = false; // Reset the task completion flag
-          taskCompletedTime = 0; // Reset the completion time for the next use
+      if (millis() - intTaskCompletedTime > 2000) { // Check if 2 seconds have passed
+          blnTaskCompleted = false; // Reset the task completion flag
+          intTaskCompletedTime = 0; // Reset the completion time for the next use
       }
     } else {
-        taskCompletedTime = 0;
+        intTaskCompletedTime = 0;
         background(backGame);
         fill(0);
         textSize(32);
@@ -138,20 +131,12 @@ public class Sketch extends PApplet {
         text("Game Screen", width / 2, 50);
         text("Energy: " + intEnergy, width - 150, 50);
 
-        // Draw entities
-        for (Employee employee : lstEmployees) {
-            employee.display();
-        }
         for (ContainmentUnit containmentUnit : lstContainmentUnits) {
             containmentUnit.display();
         }
         // Add this loop to display anomalies
         for (Anomaly anomaly : lstAnomalies) {
             anomaly.display();
-        }
-          // Display all employees
-          for (Employee emp : employees) {
-            emp.display();
         }
         // Draw back button
         drawButton("Back", 70, 45);
@@ -163,15 +148,37 @@ public class Sketch extends PApplet {
    * TBD
    */
   public void drawTutorial() {
-    background(255, 200, 150);
-    fill(0);
-    textSize(32);
+    background(255, 200, 150); // Set background color
+    fill(0); // Set text color
+    textSize(24); // Adjust text size for better readability
+
+    // Title
     textAlign(CENTER, CENTER);
-    text("Tutorial Screen", width / 2, height / 2);
+    text("Game Tutorial", width / 2, height / 2 - 200);
+
+    // Reset text alignment for instructions
+    textAlign(LEFT, CENTER);
+    textSize(18); // Smaller text for detailed instructions
+
+    // Instructions
+    String[] instructions = {
+        "1. Peanut",
+        "2. dassd.",
+    };
+
+    // Calculate starting y position for instructions
+    int startY = height / 2 - 150;
+    int stepY = 30; // Step in y direction for each instruction
+
+    // Loop through instructions and display them
+    for (int i = 0; i < instructions.length; i++) {
+        text(instructions[i], width / 4, startY + (i * stepY));
+    }
 
     // Draw back button
     drawButton("Back", 70, 45);
-  }
+}
+
   /**
    * This method is responsible for drawing the task menu screen.
    * It sets the background color, displays the menu title, and draws buttons for each task.
@@ -272,8 +279,8 @@ public class Sketch extends PApplet {
            mouseY > intY - intButtonHeight / 2 && mouseY < intY + intButtonHeight / 2;
   }
 
-  boolean taskCompleted = false;
-  String taskCompletedMessage = "";
+  boolean blnTaskCompleted = false;
+  String strTaskCompletedMessage = "";
   /**
    * Performs a task of the given type on the selected containment unit.
    * If the task type is "Research", there is a 50% chance of success. On success, 10 energy is added. On failure, 5 energy is subtracted.
@@ -284,65 +291,22 @@ public class Sketch extends PApplet {
   public void performTask(String strTaskType) {
     if (selectedUnit != null) {
         boolean blnSuccess = false;
-        int energyPointsChange = 0; // Initialize the variable to track energy points change
+        int intEnergyPointsChange = 0; // Initialize the variable to track energy points change
 
         if (strTaskType.equals("Research")) {
             blnSuccess = random(1) > 0.5;
-            energyPointsChange = blnSuccess ? 10 : -5;
+            intEnergyPointsChange = blnSuccess ? 10 : -5;
         } else if (strTaskType.equals("Repression")) {
             blnSuccess = random(1) > 0.3;
-            energyPointsChange = blnSuccess ? 15 : -25;
+            intEnergyPointsChange = blnSuccess ? 15 : -205;
         }
 
-        intEnergy += energyPointsChange; // Update the energy based on the task outcome
-        taskCompletedMessage = strTaskType + " task was " + (blnSuccess ? "a success! You gained " : "failed. You lost ") + Math.abs(energyPointsChange) + " energy points.";
-        taskCompleted = true;
+        intEnergy +=intEnergyPointsChange; // Update the energy based on the task outcome
+        strTaskCompletedMessage = strTaskType + " task was " + (blnSuccess ? "a success! You gained " : "failed. You lost ") + Math.abs(intEnergyPointsChange) + " energy points.";
+        blnTaskCompleted = true;
         if (!blnSuccess) {
           //employee.startFlashing(); // Assuming 'employee' is an instance of Employee
       }
-    }
-
-}
-
-  /**
-   * Represents an employee in the game.
-   * Each employee is represented as a blue circle on the game screen.
-   */
-  class Employee {
-    PApplet p;
-    float fltX, fltY;
-    boolean isFlashing = false;
-    int flashStartTime;
-    static final int FLASH_DURATION = 30000; // 30 seconds in milliseconds
-
-    Employee(PApplet p, float fltX, float fltY) {
-        this.p = p;
-        this.fltX = fltX;
-        this.fltY = fltY;
-    }
-
-    void startFlashing() {
-        isFlashing = true;
-        flashStartTime = p.millis();
-    }
-
-    void update() {
-        if (isFlashing && p.millis() - flashStartTime > FLASH_DURATION) {
-            isFlashing = false; // Stop flashing after 30 seconds
-        }
-    }
-
-    void display() {
-        if (isFlashing) {
-            // Flash by toggling visibility every half second
-            if ((p.millis() / 500) % 2 == 0) {
-                p.fill(0, 0, 255);
-                p.ellipse(fltX, fltY, 20, 20);
-            }
-        } else {
-            p.fill(0, 0, 255);
-            p.ellipse(fltX, fltY, 20, 20);
-        }
     }
 }
 
@@ -379,15 +343,41 @@ public class Sketch extends PApplet {
      * The anomaly is represented as a red square.
      * If the anomaly's energy is less than 0, the square's transparency oscillates/flashes.
      */
-    void display() {
-      if (intEnergy < 0) {
-        p.fill(255, 0, 0, (int) (abs(PApplet.sin((float) (p.frameCount * 0.2))) * 255));
-      } else {
-        p.fill(255, 0, 0);
-      }
-      p.rect(fltX, fltY, 30, 30);
-      move();
+long energyDropTime = -1; // Add this class-level variable
+
+void display() {
+  String strWarningText = "WARNING: Low Energy"; // Add this variable for the warning text
+  if (intEnergy < 0) {
+    if (energyDropTime == -1) { // Energy just dropped below zero
+      energyDropTime = System.currentTimeMillis();
     }
+    long timeBelowZero = System.currentTimeMillis() - energyDropTime;
+    if (timeBelowZero > 10000) { // More than 10 seconds, adjust comment if needed
+      p.background(0); // Set background to black
+      p.fill(255); // Set text color to white
+      p.textSize(32); // Increase text size for visibility
+      String message = "The anomalies breached containment. Game Over.";
+      // Set text alignment to center for both X and Y
+      p.textAlign(p.CENTER, p.CENTER);
+      // Use the screen's center for x and y coordinates
+      p.text(message, p.width / 2, p.height / 2);
+      return; // Skip drawing the anomaly
+  }
+    p.fill(255, 0, 0, (int) (abs(PApplet.sin((float) (p.frameCount * 0.2))) * 255));
+    if (PApplet.sin((float) (p.frameCount * 0.2)) > 0) {
+      p.fill(0); // Set fill color for background, black
+      p.rect(p.width - p.textWidth(strWarningText) - 20, 80, p.textWidth(strWarningText) + 20, 40);
+      p.fill(255, 0, 0); // Set fill color for text, red
+      p.textSize(24); // Set the text size
+      p.text(strWarningText, p.width - 200, 100); // Position the text on the right
+    }
+  } else {
+    energyDropTime = -1; // Reset the timer if energy is back above zero
+    p.fill(255, 0, 0);
+  }
+  p.rect(fltX, fltY, 30, 30); // Draw the anomaly
+  move();
+}
 
     /**
      * Moves the anomaly randomly within the bounds of its containment unit.
