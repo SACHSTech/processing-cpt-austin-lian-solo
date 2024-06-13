@@ -7,7 +7,7 @@
   </a>
 </p>
 
-<h1 align="center">The Anomaly Control Unit</h1>
+<h1 align="center">Anomaly Corporation</h1>
 
 ## Table of Contents
 
