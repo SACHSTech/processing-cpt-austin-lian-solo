@@ -4,6 +4,7 @@ import java.util.*;
 import gifAnimation.*;
 
 
+@SuppressWarnings("unused")
 public class Sketch extends PApplet {
 
   // Game states
@@ -352,6 +353,7 @@ long energyDropTime = -1;
  * If the energy exceeds 500, a win message is displayed.
  * The anomaly is constrained to stay within its containment unit
  */
+@SuppressWarnings("static-access")
 void display() {
   // Check if energy is above 500 to display the win screen
   if (intEnergy > 500) {
