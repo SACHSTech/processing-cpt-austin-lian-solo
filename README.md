@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="Anomaly Corporation Logo .png" alt="Anomaly Corporation Logo" width="200"/>
+</p>
+
+<p align="center">
   <a href="https://classroom.github.com/a/B2OnycBl">
     <img src="https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg" alt="Review Assignment Due Date">
   </a>
