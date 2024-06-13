@@ -3,10 +3,6 @@ import processing.core.PImage;
 import java.util.*;
 import gifAnimation.*;
 
-  /* Todo:
-   * Add game win/lose conditions (energy <= 0 for too long and anomalies escape)
-   * do something with employees (maybe make them die with a respawn timer when a task is failed)
-   */
 
 public class Sketch extends PApplet {
 
@@ -42,11 +38,11 @@ public class Sketch extends PApplet {
   PImage backGame;
   PImage containUnit;
   int intTaskCompletedTime = 0;
+
   /**
    * Initializes the game entities and sets up the game environment.
    */
   public void setup() {
-    // Initialize entities
     ContainmentUnit cu1 = new ContainmentUnit(this, 400, 300);
     ContainmentUnit cu2 = new ContainmentUnit(this, 600, 300);
     lstAnomalies.add(new Anomaly(this, 400, 300, "Anomaly 1", cu1));
@@ -78,17 +74,15 @@ public class Sketch extends PApplet {
 
   /**
    * Intializes the layout, sets up the buttons, and handles user interaction for the main menu.
-   *
-   * @author Austin L
    */
   public void drawMenu() {
     background(backMain);
     fill(50);
     textSize(48);
     textAlign(CENTER, CENTER);
-    fill(255); // Set the fill color for the rectangle
-    rect(width / 2 - 250, height / 8 - 30, 500, 60); // Increase the rectangle size
-    fill(0); // Set the fill color for the text
+    fill(255);
+    rect(width / 2 - 250, height / 8 - 30, 500, 60);
+    fill(0);
     text("Anomaly Corporation", width / 2, height / 8);
 
     // Draw buttons
@@ -108,9 +102,9 @@ public class Sketch extends PApplet {
           intTaskCompletedTime = millis();
       }
 
-      background(0); // Set background color to black
-      fill(255); // Set text color to white
-      textSize(32); // Set text size
+      background(0);
+      fill(255);
+      textSize(32);
       textAlign(CENTER, CENTER);
       text(strTaskCompletedMessage, width / 2, height / 2); // Display the completion message
 
@@ -124,28 +118,33 @@ public class Sketch extends PApplet {
         fill(0);
         textSize(32);
         textAlign(CENTER, CENTER);
-        fill(255); // Set the fill color for the rectangle
-        rect(width / 2 - 130, 30, 260, 35); // Decrease the size of the rectangle for "Game Screen"
-        rect(width - 230, 30, 230, 35); // Decrease the size of the rectangle for "Energy"
-        fill(0); // Set the fill color for the text
+        fill(255);
+        rect(width / 2 - 130, 30, 260, 35);
+        rect(width - 230, 30, 230, 35);
+        fill(0);
         text("Game Screen", width / 2, 50);
         text("Energy: " + intEnergy, width - 150, 50);
 
         for (ContainmentUnit containmentUnit : lstContainmentUnits) {
             containmentUnit.display();
         }
-        // Add this loop to display anomalies
+
         for (Anomaly anomaly : lstAnomalies) {
             anomaly.display();
         }
         // Draw back button
         drawButton("Back", 70, 45);
     }
-}
+  }
+
+
 
   /**
    * This method is responsible for drawing the tutorial screen.
-   * TBD
+   * It sets the background color, displays the tutorial title, and provides detailed instructions on how to play the game.
+   * The text size is adjusted to make the instructions clear and easy to follow.
+   * The instructions are stored in an array of strings for easy access and modification.
+   * The starting y position for the instructions is calculated based on the height of the screen and the number of instructions.
    */
   public void drawTutorial() {
     background(255, 200, 150); // Set background color
@@ -158,9 +157,9 @@ public class Sketch extends PApplet {
 
     // Reset text alignment for instructions
     textAlign(LEFT, CENTER);
-    textSize(17); // Smaller text for detailed instructions
+    textSize(17);
 
-    // Instructions
+    // Instructions array
     String[] instructions = {
         "Welcome to Anomaly Corporation!",
         "As the Director of this facility, you are tasked with containing various anomalies within containment units.",
@@ -242,6 +241,7 @@ public class Sketch extends PApplet {
     } else if (intState == 1) {
       if (isButtonClicked(70, 45)) {
         intState = 0; // Back to menu
+        intEnergy = 0; // Reset energy
       } else {
         // Check if a containment unit is clicked
         for (ContainmentUnit containmentUnit : lstContainmentUnits) {
@@ -295,11 +295,11 @@ public class Sketch extends PApplet {
   public void performTask(String strTaskType) {
     if (selectedUnit != null) {
         boolean blnSuccess = false;
-        int intEnergyPointsChange = 0; // Initialize the variable to track energy points change
+        int intEnergyPointsChange = 0;
 
         if (strTaskType.equals("Research")) {
             blnSuccess = random(1) > 0.5;
-            intEnergyPointsChange = blnSuccess ? 10 : -5;
+            intEnergyPointsChange = blnSuccess ? 1000 : -5;
         } else if (strTaskType.equals("Repression")) {
             blnSuccess = random(1) > 0.3;
             intEnergyPointsChange = blnSuccess ? 15 : -205;
@@ -342,31 +342,43 @@ public class Sketch extends PApplet {
       this.containmentUnit = containmentUnit;
     }
 
-    /**
-     * Displays the anomaly on the screen.
-     * The anomaly is represented as a red square.
-     * If the anomaly's energy is less than 0, the square's transparency oscillates/flashes.
-     */
-long energyDropTime = -1; // Add this class-level variable
-
+long energyDropTime = -1;
+/**
+ * Displays the anomaly on the screen.
+ * The anomaly is represented as a red square.
+ * If the energy drops below zero, a warning message is displayed.
+ * If the energy remains below zero for more than 10 seconds, a game over message is displayed.
+ * The anomaly moves randomly within the bounds of its containment unit.
+ * If the energy exceeds 500, a win message is displayed.
+ * The anomaly is constrained to stay within its containment unit
+ */
 void display() {
-  String strWarningText = "WARNING: Low Energy"; // Add this variable for the warning text
+  // Check if energy is above 500 to display the win screen
+  if (intEnergy > 500) {
+    p.background(0); // Set background to black
+    p.fill(255); // Set text color to white
+    p.textSize(32); // Increase text size for visibility
+    String winMessage = "Congratulations! You have contained all the anomalies!";
+    p.textAlign(p.CENTER, p.CENTER); // Center the text
+    p.text(winMessage, p.width / 2, p.height / 2); // Display the message in the center
+    return; // Skip the rest of the display logic
+  }
+
+  String strWarningText = "WARNING: Low Energy"; // Existing variable for the warning text
   if (intEnergy < 0) {
     if (energyDropTime == -1) { // Energy just dropped below zero
       energyDropTime = System.currentTimeMillis();
     }
     long timeBelowZero = System.currentTimeMillis() - energyDropTime;
-    if (timeBelowZero > 10000) { // More than 10 seconds, adjust comment if needed
+    if (timeBelowZero > 10000) { // More than 10 seconds
       p.background(0); // Set background to black
       p.fill(255); // Set text color to white
       p.textSize(32); // Increase text size for visibility
       String message = "The anomalies breached containment. Game Over.";
-      // Set text alignment to center for both X and Y
-      p.textAlign(p.CENTER, p.CENTER);
-      // Use the screen's center for x and y coordinates
-      p.text(message, p.width / 2, p.height / 2);
+      p.textAlign(p.CENTER, p.CENTER); // Center the text
+      p.text(message, p.width / 2, p.height / 2); // Display the message in the center
       return; // Skip drawing the anomaly
-  }
+    }
     p.fill(255, 0, 0, (int) (abs(PApplet.sin((float) (p.frameCount * 0.2))) * 255));
     if (PApplet.sin((float) (p.frameCount * 0.2)) > 0) {
       p.fill(0); // Set fill color for background, black
