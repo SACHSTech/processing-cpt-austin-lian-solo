@@ -198,12 +198,19 @@ public class Sketch extends PApplet {
     textAlign(CENTER, CENTER);
     text("Task Menu", width / 2, height / 4);
 
-    // Draw task buttons
-    drawButton("Research - 50% Success", width / 2, height / 2 - 50);
-    drawButton("Repression - 70% Success", width / 2, height / 2 + 50);
+    // Button 1: Research - 50% Success
+    fill(200);
+    rect(width / 2 - 100, height / 2 - 75, 200, 50, 5);
+    fill(0);
+    textSize(15);
+    text("Research - 50% Success", width / 2 - textWidth("Research - 50% Success") / 2 + 60, height / 2 - 50 + (textAscent() - textDescent()) / 2);
 
-    // Draw back button
-    drawButton("Back", 70, 45);
+    // Button 2: Repression - 70% Success
+    fill(200);
+    rect(width / 2 - 100, height / 2 + 25, 200, 50, 5);
+    fill(0);
+    textSize(15);
+    text("Repression - 70% Success", width / 2 - textWidth("Repression - 70% Success") / 2 + 60, height / 2 + 50 + (textAscent() - textDescent()) / 2);
   }
 
   /**
